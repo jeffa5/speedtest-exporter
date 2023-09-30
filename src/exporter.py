@@ -80,6 +80,9 @@ def runTest():
     except subprocess.TimeoutExpired:
         logging.error("Speedtest CLI process took too long to complete and was killed.")
         return (0, 0, 0, 0, 0, 0)
+    except Exception as e:
+        logging.error("Speedtest CLI had an unexpected problem: %s", e)
+        return (0, 0, 0, 0, 0, 0)
 
     if is_json(output):
         data = json.loads(output)
