@@ -40,7 +40,10 @@
           options = {
             services.prometheus.exporters.speedtest = {
               enable = mkEnableOption "speedest-exporter";
-              port = 9798;
+              port = mkOption {
+                type = lib.types.int;
+                default = 9798;
+              };
             };
           };
           config = mkIf cfg.enable {
