@@ -57,9 +57,10 @@ def is_json(myjson):
 def runTest():
     serverID = os.environ.get("SPEEDTEST_SERVER")
     timeout = int(os.environ.get("SPEEDTEST_TIMEOUT", "90"))
+    binary = os.environ.get("SPEEDTEST_BINARY", "speedtest")
 
     cmd = [
-        "speedtest",
+        binary,
         "--format=json-pretty",
         "--progress=no",
         "--accept-license",
@@ -69,7 +70,7 @@ def runTest():
         cmd.append(f"--server-id={serverID}")
     try:
         logging.info("Starting command (timeout=%d) %s", timeout, " ".join(cmd))
-        output = subprocess.check_output(cmd, timeout=timeout, env=os.environ)
+        output = subprocess.check_output(cmd, timeout=timeout)
         logging.info("Finished command")
     except subprocess.CalledProcessError as e:
         output = e.output
