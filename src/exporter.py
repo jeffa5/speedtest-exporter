@@ -68,7 +68,9 @@ def runTest():
     if serverID:
         cmd.append(f"--server-id={serverID}")
     try:
+        logging.info("Starting command (timeout=%d) %s", timeout, " ".join(cmd))
         output = subprocess.check_output(cmd, timeout=timeout, env=os.environ)
+        logging.info("Finished command")
     except subprocess.CalledProcessError as e:
         output = e.output
         if not is_json(output):
