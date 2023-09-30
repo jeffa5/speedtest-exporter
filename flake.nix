@@ -19,7 +19,7 @@
       python = pkgs.python3.withPackages (ps: with ps; [prometheus-client flask waitress]);
     in {
       packages.speedtest-exporter = pkgs.writeShellScriptBin "speedtest-exporter" ''
-        export PATH=${pkgs.ookla-speedtest}/bin:$PATH
+        export PATH=${pkgs.ookla-speedtest}/bin
         ${python}/bin/python ${./src/exporter.py}
       '';
 
