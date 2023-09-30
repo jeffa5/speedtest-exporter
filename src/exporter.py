@@ -3,8 +3,6 @@ import json
 import logging
 import os
 import subprocess
-import sys
-from shutil import which
 
 from flask import Flask
 from prometheus_client import Gauge, make_wsgi_app
@@ -58,7 +56,7 @@ def is_json(myjson):
 
 def runTest():
     serverID = os.environ.get("SPEEDTEST_SERVER")
-    timeout = int(os.environ.get("SPEEDTEST_TIMEOUT", 90))
+    timeout = int(os.environ.get("SPEEDTEST_TIMEOUT", "90"))
 
     cmd = [
         "speedtest",
@@ -70,7 +68,7 @@ def runTest():
     if serverID:
         cmd.append(f"--server-id={serverID}")
     try:
-        output = subprocess.check_output(cmd, timeout=timeout)
+        output = subprocess.check_output(cmd, timeout=timeout, env=os.environ)
     except subprocess.CalledProcessError as e:
         output = e.output
         if not is_json(output):
@@ -145,35 +143,7 @@ def mainPage():
     )
 
 
-def checkForBinary():
-    speedtest_bin = which("speedtest")
-    logging.info("Using speedtest binary: %s", speedtest_bin)
-    if speedtest_bin is None:
-        logging.error(
-            """
-            Speedtest CLI binary not found.
-            Please install it by going to the official website.
-            https://www.speedtest.net/apps/cli
-            """
-        )
-        sys.exit(1)
-    speedtestVersionDialog = subprocess.run(
-        ["speedtest", "--version"], capture_output=True, text=True
-    )
-    logging.info("Speedtest version info: %s", speedtestVersionDialog.stdout)
-    if "Speedtest by Ookla" not in speedtestVersionDialog.stdout:
-        logging.error(
-            """
-            Speedtest CLI that is installed is not the official one.
-            Please install it by going to the official website.
-            https://www.speedtest.net/apps/cli
-            """
-        )
-        sys.exit(1)
-
-
 if __name__ == "__main__":
-    checkForBinary()
     PORT = os.getenv("SPEEDTEST_PORT", "9798")
     logging.info("Starting Speedtest-Exporter on http://localhost:" + PORT)
     serve(app, host="0.0.0.0", port=int(PORT))
