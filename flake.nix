@@ -53,6 +53,7 @@
               serviceConfig = {
                 ExecStart = "${self.packages.${pkgs.system}.speedtest-exporter}/bin/speedtest-exporter";
                 Environment = "SPEEDTEST_PORT=${toString cfg.port}";
+                Restart = "always";
               };
             };
           };
