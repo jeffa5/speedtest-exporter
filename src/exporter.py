@@ -146,7 +146,9 @@ def mainPage():
 
 
 def checkForBinary():
-    if which("speedtest") is None:
+    speedtest_bin = which("speedtest")
+    logging.info("Using speedtest binary: %s", speedtest_bin)
+    if speedtest_bin is None:
         logging.error(
             """
             Speedtest CLI binary not found.
@@ -158,12 +160,14 @@ def checkForBinary():
     speedtestVersionDialog = subprocess.run(
         ["speedtest", "--version"], capture_output=True, text=True
     )
+    logging.info("Speedtest version info: %s", speedtestVersionDialog.stdout)
     if "Speedtest by Ookla" not in speedtestVersionDialog.stdout:
-        print(speedtestVersionDialog.stdout)
         logging.error(
-            "Speedtest CLI that is installed is not the official"
-            + " one. Please install it by going to the official"
-            + " website.\nhttps://www.speedtest.net/apps/cli"
+            """
+            Speedtest CLI that is installed is not the official one.
+            Please install it by going to the official website.
+            https://www.speedtest.net/apps/cli
+            """
         )
         sys.exit(1)
 
